@@ -3,6 +3,7 @@ spring:
     url: ${DB_URL:?DB_URL is required}
     username: ${DB_USERNAME:?DB_USERNAME is required}
     password: ${DB_PASSWORD:?DB_PASSWORD is required}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
