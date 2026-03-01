@@ -15,7 +15,9 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://vimaltech.dev")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://vimaltech.dev")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }
