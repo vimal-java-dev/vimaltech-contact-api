@@ -29,4 +29,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
+
+        ApiResponse response = new ApiResponse(
+                false,
+                "Something went wrong. Please try again later.",
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.internalServerError().body(response);
+    }
 }

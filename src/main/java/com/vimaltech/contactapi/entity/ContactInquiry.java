@@ -24,11 +24,17 @@ public class ContactInquiry {
     @Column(nullable = false)
     private String email;
 
+    @Column(length = 255)
     private String subject;
 
     @Column(nullable = false, length = 1000)
     private String message;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

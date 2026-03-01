@@ -13,6 +13,7 @@ public record ContactRequest(
         @NotBlank(message = "Email is required")
         String email,
 
+        @Size(max = 255, message = "Subject cannot exceed 255 characters")
         String subject,
 
         @NotBlank(message = "Message is required")
