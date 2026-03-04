@@ -36,3 +36,17 @@ logging:
     com.vimaltech.contactapi: INFO
     org.springframework: WARN
     org.hibernate: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+  endpoint:
+    health:
+      show-details: never
+
+  metrics:
+    tags:
+      application: contact-api
