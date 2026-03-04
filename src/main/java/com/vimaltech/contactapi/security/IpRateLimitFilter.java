@@ -36,7 +36,7 @@ public class IpRateLimitFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (!request.getRequestURI().equals("/api/v1/contact")) {
+        if (!request.getServletPath().startsWith("/api/v1/contact")) {
             filterChain.doFilter(request, response);
             return;
         }
