@@ -17,6 +17,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - monitoring-network
 
   contact-api:
     build: .
@@ -31,25 +33,12 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
     restart: unless-stopped
-
-  prometheus:
-    image: prom/prometheus
-    container_name: vimaltech-prometheus
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    restart: unless-stopped
-
-  grafana:
-    image: grafana/grafana
-    container_name: vimaltech-grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-    restart: unless-stopped
+    networks:
+      - monitoring-network
 
 volumes:
   vimaltech_pgdata:
-  grafana_data:
+
+networks:
+  monitoring-network:
+    name: monitoring-network
