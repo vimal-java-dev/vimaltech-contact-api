@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   postgres:
@@ -15,10 +13,12 @@ services:
     volumes:
       - vimaltech_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U contactuser -d contactdb" ]
+      test: ["CMD-SHELL", "pg_isready -U contactuser -d contactdb"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - monitoring-network
 
   contact-api:
     build: .
@@ -28,9 +28,17 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+    env_file:
+      - .env.prod
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: prod
     restart: unless-stopped
+    networks:
+      - monitoring-network
 
 volumes:
   vimaltech_pgdata:
+
+networks:
+  monitoring-network:
+    name: monitoring-network

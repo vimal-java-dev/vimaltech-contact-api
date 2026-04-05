@@ -2,51 +2,28 @@ package com.vimaltech.contactapi.security;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.BucketConfiguration;
-import io.github.bucket4j.distributed.proxy.ProxyManager;
-import io.github.bucket4j.redis.lettuce.cas.LettuceBasedProxyManager;
-
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.RedisURI;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Component
-@Profile("prod")
-public class RedisRateLimitFilter extends OncePerRequestFilter {
+public class IpRateLimitFilter extends OncePerRequestFilter {
 
-    private final ProxyManager<byte[]> proxyManager;
+    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-    public RedisRateLimitFilter(
-            @Value("${spring.data.redis.host}") String host,
-            @Value("${spring.data.redis.port}") int port
-    ) {
-
-        RedisURI redisURI = RedisURI.Builder.redis(host)
-                .withPort(port)
-                .build();
-
-        RedisClient redisClient = RedisClient.create(redisURI);
-
-        this.proxyManager = LettuceBasedProxyManager
-                .builderFor(redisClient)
-                .build();
-    }
-
-    private BucketConfiguration configuration() {
-        return BucketConfiguration.builder()
+    private Bucket createBucket() {
+        return Bucket.builder()
                 .addLimit(Bandwidth.simple(10, Duration.ofMinutes(1)))
                 .build();
     }
@@ -57,7 +34,7 @@ public class RedisRateLimitFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (!request.getRequestURI().equals("/api/v1/contact")) {
+        if (!request.getServletPath().startsWith("/api/v1/contact")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -66,8 +43,7 @@ public class RedisRateLimitFilter extends OncePerRequestFilter {
                 .map(s -> s.split(",")[0].trim())
                 .orElse(request.getRemoteAddr());
 
-        Bucket bucket = proxyManager.builder()
-                .build(("ip:" + ip).getBytes(), this::configuration);
+        Bucket bucket = buckets.computeIfAbsent(ip, k -> createBucket());
 
         if (bucket.tryConsume(1)) {
             filterChain.doFilter(request, response);
