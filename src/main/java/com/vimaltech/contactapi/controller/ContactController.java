@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/v1/contact")
+@RequestMapping("/api/v1/contacts")
 @RequiredArgsConstructor
 public class ContactController {
 
@@ -31,5 +31,10 @@ public class ContactController {
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllContacts() {
+        return ResponseEntity.ok(contactService.getAllContacts());
     }
 }

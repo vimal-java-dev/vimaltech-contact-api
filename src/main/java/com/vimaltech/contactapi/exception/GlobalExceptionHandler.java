@@ -40,8 +40,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
 
-        // 🔥 CRITICAL LINE (THIS WAS MISSING)
-        log.error("Unhandled exception occurred", ex);
+        log.error("Unhandled exception occurred: {}", ex.getMessage(), ex);
+
+        ex.printStackTrace();  // 🔥 TEMPORARY DEBUG (force output)
 
         ApiResponse response = new ApiResponse(
                 false,

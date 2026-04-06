@@ -19,23 +19,21 @@ spring:
   main:
     banner-mode: off
 
+logging:
+  level:
+    root: INFO
+    com.vimaltech.contactapi: DEBUG
+
 server:
   error:
-    include-stacktrace: never
-    include-message: never
+    include-stacktrace: always
+    include-message: always
 
 springdoc:
   api-docs:
     enabled: false
   swagger-ui:
     enabled: false
-
-logging:
-  level:
-    root: WARN
-    com.vimaltech.contactapi: INFO
-    org.springframework: WARN
-    org.hibernate: WARN
 
 management:
   endpoints:
