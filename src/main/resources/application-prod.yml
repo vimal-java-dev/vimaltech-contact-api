@@ -5,6 +5,18 @@ spring:
     password: ${DB_PASSWORD:?DB_PASSWORD is required}
     driver-class-name: org.postgresql.Driver
 
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   data:
     redis:
       host: redis
@@ -48,3 +60,7 @@ management:
   metrics:
     tags:
       application: contact-api
+
+app:
+  mail:
+    from: ${MAIL_FROM}
