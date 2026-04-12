@@ -1,0 +1,14 @@
+# application-test.yml
+spring:
+  mail:
+    host: localhost
+    port: 1025
+    username: test
+    password: test
+
+app:
+  mail:
+    from: test@test.com
+    enabled: false
+  admin:
+    email: test@test.com

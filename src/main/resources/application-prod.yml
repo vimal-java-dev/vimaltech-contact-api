@@ -11,18 +11,11 @@ spring:
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-  data:
-    redis:
-      host: vimaltech-redis
-      port: 6379
-      password: ${SPRING_DATA_REDIS_PASSWORD}
-      timeout: 2000
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
 
   jpa:
     hibernate:
@@ -61,7 +54,7 @@ management:
         enabled: true   # ✅ IMPORTANT
       group:
         readiness:
-          include: db,redis
+          include: db
 
   health:
     mail:
@@ -73,4 +66,6 @@ management:
 
 app:
   mail:
-    from: ${MAIL_FROM}
+    from: ${MAIL_FROM:?MAIL_FROM is required}
+  admin:
+    email: ${APP_ADMIN_EMAIL:?APP_ADMIN_EMAIL is required}
