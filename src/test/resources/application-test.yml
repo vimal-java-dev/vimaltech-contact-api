@@ -4,6 +4,11 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  mail:
+    host: localhost
+    port: 1025
+    username: test
+    password: test
 
   jpa:
     hibernate:
@@ -11,3 +16,10 @@ spring:
 
   flyway:
     enabled: false
+
+app:
+  mail:
+    from: test@test.com
+    enabled: false
+  admin:
+    email: test@test.com
