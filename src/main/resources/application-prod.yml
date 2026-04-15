@@ -30,6 +30,7 @@ logging:
     root: INFO
     com.vimaltech.contactapi: DEBUG
     org.springframework.web.servlet.resource: WARN
+    org.springframework.web.servlet.PageNotFound: WARN
 
 server:
   error:
