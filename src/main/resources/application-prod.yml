@@ -29,6 +29,7 @@ logging:
   level:
     root: INFO
     com.vimaltech.contactapi: DEBUG
+    org.springframework.web.servlet.resource: WARN
 
 server:
   error:
