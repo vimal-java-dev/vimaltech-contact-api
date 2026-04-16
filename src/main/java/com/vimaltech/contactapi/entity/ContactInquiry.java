@@ -1,5 +1,6 @@
 package com.vimaltech.contactapi.entity;
 
+import com.vimaltech.contactapi.enums.InquiryType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,8 +25,9 @@ public class ContactInquiry {
     @Column(nullable = false)
     private String email;
 
-    @Column(length = 255)
-    private String subject;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 255)
+    private InquiryType subject;
 
     @Column(nullable = false, length = 1000)
     private String message;

@@ -3,11 +3,14 @@ package com.vimaltech.contactapi.service;
 import com.vimaltech.contactapi.config.AppProperties;
 import com.vimaltech.contactapi.dto.ContactRequest;
 import com.vimaltech.contactapi.dto.EmailRequest;
+import com.vimaltech.contactapi.dto.InquiryOption;
 import com.vimaltech.contactapi.entity.ContactInquiry;
+import com.vimaltech.contactapi.enums.InquiryType;
 import com.vimaltech.contactapi.repository.ContactRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,9 +27,18 @@ public class ContactService {
         this.appProperties = appProperties;
     }
 
+    public List<InquiryOption> getInquiryOptions() {
+        return Arrays.stream(InquiryType.values())
+                .map(type -> new InquiryOption(
+                        type.name(),        // BACKEND
+                        type.getLabel()     // Java Backend...
+                ))
+                .toList();
+    }
+
     public void processContact(ContactRequest request) {
 
-        // ✅ 1. Save to DB (unchanged behavior)
+        // ✅ Save to DB
         ContactInquiry inquiry = ContactInquiry.builder()
                 .name(request.name())
                 .email(request.email())
@@ -36,34 +48,33 @@ public class ContactService {
 
         contactRepository.save(inquiry);
 
-        log.info("Contact saved | email={}", request.email());
+        log.info("Contact saved | email={} | subject={}", request.email(), request.subject());
 
-        // ✅ 2. Send emails {(non-blocking for business logic), try-catch removed}
-        // ✅ Fire async emails (NO try-catch)
+        // ✅ Send async emails
         sendEmails(request);
     }
 
-    // ✅ NEW METHOD (clean separation)
     private void sendEmails(ContactRequest request) {
+
+        String subjectLabel = request.subject().getLabel(); // ✅ human-readable
 
         // 📩 Admin Email
         EmailRequest adminEmail = EmailRequest.builder()
                 .to(appProperties.getEmail())
-                .subject("New Contact Inquiry: " +
-                        (request.subject() != null ? request.subject() : "No Subject"))
+                .subject("New Contact Inquiry: " + subjectLabel)
                 .body("""
-                New contact inquiry received:
+            New contact inquiry received:
 
-                Name: %s
-                Email: %s
-                Subject: %s
+            Name: %s
+            Email: %s
+            Subject: %s
 
-                Message:
-                %s
-                """.formatted(
+            Message:
+            %s
+            """.formatted(
                         request.name(),
                         request.email(),
-                        request.subject(),
+                        subjectLabel,
                         request.message()
                 ))
                 .replyTo(request.email())
@@ -76,13 +87,18 @@ public class ContactService {
                 .to(request.email())
                 .subject("Thanks for contacting VimalTech")
                 .body("""
-                Hi %s,
+            Hi %s,
 
-                Thank you for reaching out. We have received your message and will respond shortly.
+            Thank you for reaching out regarding "%s".
 
-                Best regards,
-                VimalTech Team
-                """.formatted(request.name()))
+            We have received your message and will respond shortly.
+
+            Best regards,
+            VimalTech Team
+            """.formatted(
+                        request.name(),
+                        subjectLabel
+                ))
                 .build();
 
         emailService.sendEmail(userEmail);

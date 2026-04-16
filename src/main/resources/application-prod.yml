@@ -22,19 +22,23 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
   main:
     banner-mode: off
 
 logging:
   level:
     root: INFO
-    com.vimaltech.contactapi: DEBUG
+    com.vimaltech.contactapi: INFO
     org.springframework.web.servlet.resource: WARN
     org.springframework.web.servlet.PageNotFound: WARN
 
 server:
   error:
-    include-stacktrace: always
+    include-stacktrace: never
     include-message: always
 
 springdoc:
@@ -65,6 +69,11 @@ management:
   metrics:
     tags:
       application: contact-api
+
+  security:
+    user:
+      name: admin
+      password: "{noop}${ADMIN_PASSWORD}"
 
 app:
   mail:

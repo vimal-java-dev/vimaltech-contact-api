@@ -26,3 +26,5 @@ logging:
     com.vimaltech.contactapi: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
+    org.springframework.web.servlet.resource: WARN
+    org.springframework.web.servlet.PageNotFound: WARN
