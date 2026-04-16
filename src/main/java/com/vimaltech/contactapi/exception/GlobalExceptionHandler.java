@@ -16,6 +16,7 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    // ✅ 1. Bean validation errors (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidationException(
             MethodArgumentNotValidException ex) {
@@ -38,21 +39,34 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    // ✅ NEW: Handle enum parsing errors (very important)
+    // ✅ 2. JSON parsing / ENUM errors (UPDATED - precise handling)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiResponse> handleEnumError(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiResponse> handleJsonParseError(HttpMessageNotReadableException ex) {
 
         log.warn("Invalid request format or enum value: {}", ex.getMessage());
 
+        String message = "Invalid request format";
+
+        // 🔥 Extract root cause (THIS is what you asked about)
+        Throwable root = ex.getCause();
+
+        if (root instanceof IllegalArgumentException &&
+                root.getMessage() != null &&
+                root.getMessage().contains("Invalid subject value")) {
+
+            message = root.getMessage(); // use exact enum error
+        }
+
         ApiResponse response = new ApiResponse(
                 false,
-                "Invalid subject value. Allowed: FRONTEND, BACKEND, FULLSTACK, VPS, OTHER",
+                message,
                 LocalDateTime.now()
         );
 
         return ResponseEntity.badRequest().body(response);
     }
 
+    // ✅ 3. Catch-all (fallback)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
 

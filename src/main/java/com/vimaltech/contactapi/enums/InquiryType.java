@@ -25,8 +25,11 @@ public enum InquiryType {
     // ✅ Case-insensitive parsing (already discussed)
     @JsonCreator
     public static InquiryType from(String value) {
-        if (value == null) {
-            return null;
+
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Subject must not be null or empty. Allowed values: FRONTEND, BACKEND, FULLSTACK, VPS, OTHER"
+            );
         }
 
         try {
