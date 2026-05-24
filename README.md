@@ -170,7 +170,7 @@ docker-compose up --build
 
 ## 🌍 Live Demo
 
-👉 https://vimaltech.dev/
+👉 [https://vimaltech.dev/](https://vimaltech.dev/contactUs/)
 
 ---
 
