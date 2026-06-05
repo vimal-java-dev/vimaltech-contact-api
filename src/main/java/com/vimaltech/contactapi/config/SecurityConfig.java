@@ -26,7 +26,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/contacts/options").permitAll()
 
                         // 🔒 Admin endpoint
-                        .requestMatchers(HttpMethod.GET, "/api/v1/contacts").authenticated()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/contacts").hasRole("ADMIN")
 
                         // Everything else
                         .anyRequest().permitAll()
