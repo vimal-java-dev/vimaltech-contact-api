@@ -5,12 +5,13 @@ import com.vimaltech.contactapi.entity.EmailLog;
 import com.vimaltech.contactapi.enums.EmailStatus;
 import com.vimaltech.contactapi.repository.EmailLogRepository;
 import com.vimaltech.contactapi.service.EmailService;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -70,17 +71,20 @@ public class SmtpEmailService implements EmailService {
 
             emailLogRepository.save(emailLog);
 
-            SimpleMailMessage message = new SimpleMailMessage();
+            MimeMessage message = mailSender.createMimeMessage();
 
-            message.setFrom(from);
-            message.setTo(request.getTo());
-            message.setSubject(request.getSubject());
-            message.setText(request.getBody());
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(message, false, "UTF-8");
+
+            helper.setFrom(from, "Vimal Tech");
+            helper.setTo(request.getTo());
+            helper.setSubject(request.getSubject());
+            helper.setText(request.getBody());
 
             if (request.getReplyTo() != null
                     && !request.getReplyTo().isBlank()) {
 
-                message.setReplyTo(request.getReplyTo().trim());
+                helper.setReplyTo(request.getReplyTo().trim());
             }
 
             mailSender.send(message);

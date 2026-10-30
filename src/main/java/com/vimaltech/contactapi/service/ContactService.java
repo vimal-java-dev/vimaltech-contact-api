@@ -85,7 +85,7 @@ public class ContactService {
         // 📩 User Confirmation Email
         EmailRequest userEmail = EmailRequest.builder()
                 .to(request.email())
-                .subject("Thanks for contacting VimalTech")
+                .subject("Thanks for contacting Vimal Tech")
                 .body("""
             Hi %s,
 
@@ -94,7 +94,7 @@ public class ContactService {
             We have received your message and will respond shortly.
 
             Best regards,
-            VimalTech Team
+            Vimal Tech Team
             """.formatted(
                         request.name(),
                         subjectLabel
